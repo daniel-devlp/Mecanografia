@@ -2,66 +2,127 @@
 <style>
   :root {
     color-scheme: light dark;
-    --green: #00b755;
-    --yellow: #daaf38;
-    --red: #ca4754;
-    --black: #222;
-    --gray: #999;
+    --green: #00e676;
+    --yellow: #ffea00;
+    --red: #ff5252;
+    --black: #121212;
+    --gray: #b0b0b0;
+    --dark-gray: #333;
+    --white: #f5f5f5;
+    --primary: #6200ee;
+    --primary-light: #9e47ff;
+    --font-main: 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.2s ease-in-out;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 
   body {
     background: var(--black);
-    font-family: Menlo, monospace;
-    display: grid;
-    padding: 32px;
+    color: var(--white);
+    font-family: var(--font-main);
+    display: flex;
     justify-content: center;
-    margin-top: 32px;
-    padding: 16px;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+    line-height: 1.5;
+  }
+
+  main {
+    width: 100%;
+    max-width: 800px;
+    background: var(--dark-gray);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+  }
+
+  header {
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-weight: 600;
+    color: var(--yellow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo svg {
+    width: 20px;
+    height: 20px;
   }
 
   section {
-    padding: 16px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    max-width: 500px;
+    gap: 16px;
+  }
+
+  .timer-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
   }
 
   time {
-    color: var(--yellow)
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--yellow);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
   }
 
-  input {
-    z-index: -999;
-    position: absolute;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    opacity: 0;
+  .typing-container {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    border-radius: var(--border-radius);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
   }
 
   p {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px 8px;
+    gap: 8px 12px;
     margin: 0;
+    font-size: 22px;
+    line-height: 1.8;
   }
 
   letter {
     color: var(--gray);
     position: relative;
+    transition: color 0.1s ease;
 
     &.active::before {
       content: '|';
       color: var(--yellow);
-      font-size: 14px;
+      font-size: 22px;
       position: absolute;
-      left: -65%;
+      left: -50%;
       animation: 1s blink infinite ease-in-out;
     }
 
     &.active.is-last::before {
-      left: 65%;
+      left: 50%;
     }
 
     &.correct {
@@ -74,88 +135,195 @@
   }
 
   word {
-    border-bottom: 1.5px solid transparent;
+    border-bottom: 2px solid transparent;
     transition: border-color 0.3s ease-in-out;
+    border-radius: 2px;
+    padding: 2px 0;
 
     &.marked {
+      background: rgba(202, 71, 84, 0.1);
       border-color: var(--red);
+    }
+
+    &.active {
+      background: rgba(255, 234, 0, 0.05);
     }
   }
 
   @keyframes blink {
+    0%, 25% { opacity: 1; }
+    75% { opacity: 0; }
+  }
 
-    0%,
-    25% {
-      opacity: 1;
-    }
-
-    75% {
-      opacity: 0;
-    }
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
   }
 
   #game {
     display: flex;
+    flex-direction: column;
   }
 
   #results {
     display: none;
+    text-align: center;
+    align-items: center;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    width: 100%;
+    margin: 16px 0;
+  }
+
+  .result-card {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: var(--border-radius);
   }
 
   h2 {
     font-weight: 400;
-    opacity: .4;
+    opacity: 0.7;
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   h3 {
-    font-weight: 400;
-    margin: 0;
-    font-size: 24px;
+    font-weight: 600;
+    margin: 8px 0 0;
+    font-size: 32px;
+  }
+
+  .wpm {
     color: var(--yellow);
   }
 
+  .accuracy {
+    color: var(--green);
+  }
+
   button {
-    background: transparent;
-    border: 0;
-    margin-top: 32px;
-    padding: 8px;
-    opacity: .4;
-    display: inline-block;
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    background: var(--primary);
+    color: white;
+    border: none;
+    margin-top: 24px;
+    padding: 12px 24px;
+    font-family: var(--font-main);
+    font-size: 16px;
+    border-radius: 50px;
     cursor: pointer;
-    border-radius: 16px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 
     &:hover {
-      background: #444;
-      opacity: 1;
-      scale: 110%;
+      background: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--box-shadow);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .instructions {
+    color: var(--gray);
+    font-size: 14px;
+    text-align: center;
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 600px) {
+    p {
+      font-size: 18px;
+    }
+    
+    .results-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    section {
+      padding: 16px;
+    }
+    
+    .typing-container {
+      padding: 16px;
     }
   }
 </style>
 
 <body>
   <main>
-    <section id="game">
-      <time></time>
-      <p></p>
-      <input autofocus>
-    </section>
-    <section id="results">
-      <h2>wpm</h2>
-      <h3 id="results-wpm"></h3>
-
-      <h2>accuracy</h2>
-      <h3 id="results-accuracy"></h3>
-
-      <button id="reload-button">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M19.933 13.041a8 8 0 1 1 -9.925 -8.788c3.899 -1 7.935 1.007 9.425 4.747" />
-          <path d="M20 4v5h-5" />
+    <header>
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+          <path d="M8.5 8.5v.01"></path>
+          <path d="M16 15.5v.01"></path>
+          <path d="M12 12v.01"></path>
+          <path d="M11 17v.01"></path>
+          <path d="M7 14v.01"></path>
         </svg>
+        <span>MonkeyType</span>
+      </div>
+      <div id="theme-toggle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </div>
+    </header>
+    
+    <section id="game">
+      <div class="timer-container">
+        <time>30</time>
+      </div>
+      <div class="typing-container">
+        <p></p>
+        <input autofocus>
+      </div>
+      <p class="instructions">Start typing to begin the test. Press space to move to the next word.</p>
+    </section>
+    
+    <section id="results">
+      <h2>Test Completed</h2>
+      
+      <div class="results-grid">
+        <div class="result-card">
+          <h2>Words per minute</h2>
+          <h3 class="wpm" id="results-wpm">0</h3>
+        </div>
+        <div class="result-card">
+          <h2>Accuracy</h2>
+          <h3 class="accuracy" id="results-accuracy">0%</h3>
+        </div>
+      </div>
+      
+      <button id="reload-button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+          <path d="M16 16h5v5"></path>
+        </svg>
+        Try Again
       </button>
     </section>
   </main>
@@ -172,12 +340,13 @@
   const $wpm = $results.querySelector('#results-wpm')
   const $accuracy = $results.querySelector('#results-accuracy')
   const $button = document.querySelector('#reload-button')
+  const $themeToggle = document.querySelector('#theme-toggle')
 
   const INITIAL_TIME = 30;
-
   let words = []
   let currentTime = INITIAL_TIME
   let playing
+  let isDarkMode = true
 
   initGame()
   initEvents()
@@ -229,10 +398,36 @@
         }, 1000)
       }
     })
+    
     $input.addEventListener('keydown', onKeyDown)
     $input.addEventListener('keyup', onKeyUp)
     $button.addEventListener('click', initGame)
+    $themeToggle.addEventListener('click', toggleTheme)
+  }
 
+  function toggleTheme() {
+    isDarkMode = !isDarkMode
+    document.documentElement.style.setProperty('color-scheme', isDarkMode ? 'dark' : 'light')
+    
+    // Update theme toggle icon
+    const icon = $themeToggle.querySelector('svg')
+    if (isDarkMode) {
+      icon.innerHTML = `
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      `
+    } else {
+      icon.innerHTML = `
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      `
+    }
   }
 
   function onKeyDown(event) {
@@ -244,6 +439,11 @@
       event.preventDefault()
 
       const $nextWord = $currentWord.nextElementSibling
+      if (!$nextWord) {
+        gameOver()
+        return
+      }
+      
       const $nextLetter = $nextWord.querySelector('letter')
 
       $currentWord.classList.remove('active', 'marked')
@@ -294,7 +494,6 @@
   }
 
   function onKeyUp() {
-    // recuperamos los elementos actuals
     const $currentWord = $paragraph.querySelector('word.active')
     const $currentLetter = $currentWord.querySelector('letter.active')
 
@@ -322,7 +521,6 @@
       $nextActiveLetter.classList.add('active')
     } else {
       $currentLetter.classList.add('active', 'is-last')
-      // TODO: gameover si no hay próxima palabra
     }
   }
 
@@ -341,7 +539,7 @@
       : 0
 
     const wpm = correctWords * 60 / INITIAL_TIME
-    $wpm.textContent = wpm
-    $accuracy.textContent = `${accuracy.toFixed(2)}%`
+    $wpm.textContent = Math.round(wpm)
+    $accuracy.textContent = `${Math.round(accuracy)}%`
   }
 </script>
